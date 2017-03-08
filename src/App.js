@@ -5,6 +5,7 @@ import logger from "redux-logger";
 import thunk from "redux-thunk";
 import { applyMiddleware, createStore } from 'redux';
 import promise from "redux-promise-middleware";
+import Data from "./components/data";
 
 const initialState = {
     fetching: false,
@@ -45,16 +46,12 @@ store.dispatch({
 })
 
 class App extends Component {
-
-
     constructor(props) {
         super(props);
-
     }
-
     /*
      * JS -fetch, work fine, but how to store this data?
-     */
+     *
     fetchData() {
         var dataTest = [];
         fetch('http://localhost:5000/getData').then(
@@ -77,13 +74,12 @@ class App extends Component {
         ).catch(function(err) {
             console.log('Fetch Error :-S', err);
         });
-    }
+    }*/
 
     render() {
         return (
             <div className="App">
                 <h1>CyberAttacks</h1>
-                <button onClick={() => this.fetchData()}>Get Domains</button>
             </div>
         );
     }
