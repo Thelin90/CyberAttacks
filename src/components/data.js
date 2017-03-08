@@ -27,14 +27,9 @@ class Data extends Component {
             console.log('Fetch Error :-S', err);
         });
     }
-
-
     render() {
         return (
             <div className="Data">
-                <div>Some test again</div>
-                <button onClick={() => this.fetchData()}>Get Domains</button>
-                <h1>{this.props.domain}</h1>
             </div>
         );
     }

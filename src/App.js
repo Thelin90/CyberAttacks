@@ -1,87 +1,89 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import logo from './logo.svg';
 import './App.css';
-import axios from "axios";
-import logger from "redux-logger";
-import thunk from "redux-thunk";
-import { applyMiddleware, createStore } from 'redux';
-import promise from "redux-promise-middleware";
-import Data from "./components/data";
-
-const initialState = {
-    fetching: false,
-    fetched: false,
-    users: [],
-    error: null,
-};
-
-const reducer = (state=initialState, action) => {
-    switch (action.type) {
-        case "FETCH_USERS_PENDING": {
-            return {... state, fetching: true}
-            break;
-        }
-        case "FETCH_USERS_REJECTED": {
-            return {... state, fetching: false, error: action.payload}
-            break;
-        }
-        case "RECEIVE_USERS_FULFILLED": {
-            return {
-                ...state,
-                fetching: false,
-                fetched: true,
-                users: action.payload,
-            }
-            break;
-        }
-    }
-    return state;
-}
-
-const middleware = applyMiddleware(promise(), thunk, logger())
-const store = createStore(reducer, middleware)
-
-store.dispatch({
-    type: "FETCH_USERS",
-    payload: axios.get("http://localhost:5000/getData")
-})
 
 class App extends Component {
+
+    // Define a constructor here to define variables to store data in App State
     constructor(props) {
         super(props);
+        this.state = {
+            dataObjects: [],
+            indexValues: {AuthProtocol: '', DateTime: '', Destination: '', Domain: '', EventID: parseInt(''.substring(''.length - 1), 10), LogFile: '', LogonType: parseInt(''.substring(''.length - 1), 10), Source: '', Type: '', User: ''},
+            dataFetched: false
+        }
     }
-    /*
-     * JS -fetch, work fine, but how to store this data?
-     *
-    fetchData() {
-        var dataTest = [];
-        fetch('http://localhost:5000/getData').then(
-            function(response) {
-                if (response.status !== 200) {
-                    console.log('Looks like there was a problem. Status Code: ' +
-                        response.status);
-                    return;
-                }
 
-                // Examine the text in the response
-                response.json().then(function(data) {
-                    console.log(data);
-                    dataTest = data;
-                    console.log(dataTest);
+    // Handle the GET API request
+    handleGetData() {
+        // Make GET request to a route I got online
+        axios.get('http://localhost:5000/getData')
+        // Handle the Response object and store Data in App State
+        // setState is how we assign values to application state
+            .then((response) => this.setState({
+                dataObjects: response.data,
+                dataFetched: true
+            }))
+            .catch(function (error) {
+                // Error handling
+                console.log(error);
+            });
 
-                    console.log(dataTest[4].DateTime);
-                });
-            }
-        ).catch(function(err) {
-            console.log('Fetch Error :-S', err);
-        });
-    }*/
+        //this.props.data.map(this.data);
+    }
 
+    // Handle displaying data in App
+    handleDataDisplay() {
+        var printSomeStuff = 'exampleCss';
+        var authProtocol = '';
+        // If data fetched is false, display 'NO DATA YET'
+        if (!this.state.dataFetched) {
+            return <div>NO DATA YET</div>
+        } else {
+
+            this.state.dataObjects.map((objects) => {
+
+                this.authProtocol = objects.AuthProtocol;
+
+                console.log('Hmm: ', this.authProtocol); // works?
+
+                console.log('DATA IN MEMORY OBJ AuthProtocol: ', objects.AuthProtocol);
+                console.log('DATA IN MEMORY OBJ DateTime: ', objects.DateTime);
+                console.log('DATA IN MEMORY OBJ Destination: ', objects.Destination);
+                console.log('DATA IN MEMORY OBJ EventID: ', objects.EventID);
+                console.log('DATA IN MEMORY OBJ Domain: ', objects.Domain);
+                console.log('DATA IN MEMORY OBJ LogFile: ', objects.LogFile);
+                console.log('DATA IN MEMORY OBJ LogonType: ', objects.LogonType);
+                console.log('DATA IN MEMORY OBJ Source: ', objects.Source);
+                console.log('DATA IN MEMORY OBJ Type: ', objects.Type);
+                console.log('DATA IN MEMORY OBJ User: ', objects.User);
+                return (
+                    <div className={ printSomeStuff }>
+                        <li>Address: {authProtocol}</li>
+                    </div>
+                );
+            });
+        }
+    }
     render() {
+        console.log('DATA IN MEMORY: ', this.state.dataObjects); // Console log so you can check the response Object from API
+        console.log('DATA IN MEMORY: ', this.state.dataObjects.Domain); // does not work! Aha!
         return (
             <div className="App">
-                <h1>CyberAttacks</h1>
+                <div className="App-header">
+                    <img src={logo} className="App-logo" alt="logo" />
+                    <h2>Welcome to React</h2>
+                </div>
+                <p className="App-intro">
+                    <button onClick={() => this.handleGetData()}>PILLAGE DATA</button>
+                    <li>{}</li>
+                </p>
+                {/* The handleDataDisplay function will handle our logic for what we display */}
+                {this.handleDataDisplay()}
             </div>
         );
     }
 }
+
 export default App;
