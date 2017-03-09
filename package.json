@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.15.3",
+    "d3": "^4.7.1",
     "react": "^15.4.2",
+    "react-d3-basic": "^1.6.11",
+    "react-d3-library": "^1.1.7",
     "react-dom": "^15.4.2"
   },
   "devDependencies": {
