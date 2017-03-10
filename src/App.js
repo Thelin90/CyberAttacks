@@ -1,36 +1,33 @@
+//noinspection JSUnresolvedVariable
 import React, { Component } from 'react';
-import ReactDOM from 'react';
 import axios from 'axios';
 import logo from './logo.svg';
 import './App.css';
+import * as d3 from 'd3'
 
-var Chart = require('./Chart');
+var result = [], sorted = [], text = '', domains=[], svgContainer, circles;
 
-var sampleData = [
-    {id: '5fbmzmtc', x: 7, y: 41, z: 6},
-    {id: 's4f8phwm', x: 11, y: 45, z: 9},
-    // ...
-];
-
-
-
-var counter = 0;
+var jsonCircles = [
+    { "x_axis": 30, "y_axis": 30, "radius": 20, "color" : "green" },
+    { "x_axis": 70, "y_axis": 70, "radius": 10, "color" : "purple"},
+    { "x_axis": 200, "y_axis": 100, "radius": 30, "color" : "red"}];
 
 class App extends Component {
 
-    // Define a constructor here to define variables to store data in App State
+    /*
+    *Define a constructor here to define variables to store data in App State
+    */
     constructor(props) {
         super(props);
         this.state = {
-            data: sampleData,
-            domain: {x: [0, 30], y: [0, 100]},
             dataObjects: [],
-            indexValues: {AuthProtocol: '', DateTime: '', Destination: '', Domain: '', EventID: parseInt(''.substring(''.length - 1), 10), LogFile: '', LogonType: parseInt(''.substring(''.length - 1), 10), Source: '', Type: '', User: ''},
             dataFetched: false
         }
     }
 
-    // Handle the GET API request
+    /*
+    *Handle the GET API request
+    */
     handleGetData() {
         // Make GET request to a route I got online
         axios.get('http://localhost:5000/getData')
@@ -38,9 +35,7 @@ class App extends Component {
         // setState is how we assign values to application state
             .then((response) => this.setState({
                 dataObjects: response.data,
-                dataFetched: true,
-                data: sampleData,
-                domain: {x: [0, 30], y: [0, 100]}
+                dataFetched: true
             }))
             .catch(function (error) {
                 // Error handling
@@ -48,83 +43,142 @@ class App extends Component {
             });
     }
 
-    // Handle displaying data in App
+    /*
+    * Handle displaying data in App
+    */
     handleDataDisplay() {
-
-        var printSomeStuff = 'exampleCss';
-        var authProtocol = '';
-
-
         // If data fetched is false, display 'NO DATA YET'
         if (!this.state.dataFetched) {
             return <div>NO DATA YET</div>
         } else {
 
             this.state.dataObjects.map((objects) => {
-
-
-                this.authProtocol = objects.AuthProtocol;
-
-                console.log('Hmm: ', this.authProtocol); // works?
-/*
-                console.log('DATA IN MEMORY OBJ AuthProtocol: ', objects.AuthProtocol);
-                console.log('DATA IN MEMORY OBJ DateTime: ', objects.DateTime);
-                console.log('DATA IN MEMORY OBJ Destination: ', objects.Destination);
-                console.log('DATA IN MEMORY OBJ EventID: ', objects.EventID);
-                console.log('DATA IN MEMORY OBJ Domain: ', objects.Domain);
-                console.log('DATA IN MEMORY OBJ LogFile: ', objects.LogFile);
-                console.log('DATA IN MEMORY OBJ LogonType: ', objects.LogonType);
-                console.log('DATA IN MEMORY OBJ Source: ', objects.Source);
-                console.log('DATA IN MEMORY OBJ Type: ', objects.Type);
-                console.log('DATA IN MEMORY OBJ User: ', objects.User);
+                /*
+                * use this to debugg the elements in the console
+                * console.log("debugg: ", objects.X); where X = Domain, Network... and so on!
+                *
+                * use return below when needed
                 */
-
-
-
-                if(this.authProtocol === ('NTLM')) {
-                    console.log("length: ", this.state.dataObjects.length);
-                    counter++;
-                }
-
-
-                console.log("count auth: ", counter);
-
                 return (
-                    <div>
-
-                    <hl>
-                        <li>hej</li>
-                    </hl>
-                    </div>
+                    <ul>
+                        <li></li>
+                    </ul>
                 );
             });
         }
     }
 
+    /*
+     * Count occurrence of
+     */
+    countOccurrence() {
+        for(var i = 0; i < domains.length; ++i) {
+            if(!result[domains[i]]) {
+                result[domains[i]] = 0;
+            }
+            ++result[domains[i]];
+        }
+        /*
+         * For an easier output?
+         */
+
+        console.log("totalt: ", result);
+        this.sortReplicas(domains);
+    }
+
+    /*
+     *  Sort away replicas, example: Kerberos, ..., Kerberos => [Kerberos]!.
+     *  Can live without it, but i want to do this for now... helps me to
+     *  print the text to the page when iterating
+     */
+    sortReplicas(unsorted) {
+        var units = unsorted.map((name) => {
+                return {count: 1, name: name}
+            }).reduce((a, b) => {
+                a[b.name] = (a[b.name] || 0) + b.count
+                return a
+            }, {})
+        sorted = Object.keys(units).sort((a, b) => units[a] < units[b])
+
+    }
+
+    iteration() {
+        for(var i=1; i < sorted.length; i++) {
+            text += "\n";
+            text += ("{"+sorted[i] + " : " + result[sorted[i]]+"}");
+        }
+        return text;
+    }
+
+    setSvgContainer() {
+        svgContainer = d3.select("body").append("svg")
+          .attr("width", 1000)
+          .attr("height", 800);
+
+    }
+
+
+    setCircle1() {
+        circles = svgContainer.selectAll("circle")
+            .data(jsonCircles)
+            .enter()
+            .append("circle");
+    }
+
+    setCircleAttributes() {
+        circles
+            .attr("cx", function (d) { return d.x_axis; })
+            .attr("cy", function (d) { return d.y_axis; })
+            .attr("r", function (d) { return d.radius; })
+            .style("fill", function(d) { return d.color; });
+    }
+
     render() {
-        console.log('DATA IN MEMORY: ', this.state.dataObjects); // Console log so you can check the response Object from API
-        console.log('DATA IN MEMORY: ', this.state.dataObjects.Domain); // does not work! Aha!
+        /*
+        * Here i push all my data to render
+        */
+        this.state.dataObjects.map((objects) => {
+            domains.push(objects.AuthProtocol);
+            domains.push(objects.Domain);
+            domains.push(objects.DateTime);
+            domains.push(objects.Destination);
+            domains.push(objects.EventID);
+            domains.push(objects.LogFile);
+            domains.push(objects.LogonType);
+            domains.push(objects.Source);
+            domains.push(objects.Type);
+            domains.push(objects.User);
+            console.log('Objects Domain: ', objects.AuthProtocol);
+            return (
+                <ul>
+                    <li></li>
+                    <li>{this.state.dataObjects.toString()}</li>
+                </ul>
+            );
+        });
+
         return (
             <div className="App">
                 <div className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <h2>Welcome to React</h2>
+                    <img src={logo} className="App-logo" alt="logo"/>
+                    <h2>Welcome to React with D3!</h2>
                 </div>
                 <p className="App-intro">
                     <button onClick={() => this.handleGetData()}>PILLAGE DATA</button>
-                    <li>{}</li>
-
-
+                    {this.countOccurrence()}
+                    <u1>{"\n"+this.iteration()}</u1>
                 </p>
-                <Chart
-                    data={this.state.data}
-                    domain={this.state.domain}
-                />
+
                 {/* The handleDataDisplay function will handle our logic for what we display */}
                 {this.handleDataDisplay()}
+                /*
+                    lets call the drawing here
+                 */
+                {this.setSvgContainer()}
+                {this.setCircle1()}
+                {this.setCircleAttributes()}
             </div>
         );
     }
 }
-
 export default App;

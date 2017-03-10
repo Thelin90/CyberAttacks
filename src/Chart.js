@@ -3,14 +3,44 @@
  */
 
 // Chart.js
-import React, { Component } from 'react';
-import rd3 from 'react-d3-library';
-import ReactDom from 'react-dom';
-require('./d3Chart.less');
+/*import React from 'react';
+import d3 from 'react-d3-library';
 
+var node = document.createElement('div');
+
+var diameter = 960,
+    format = d3.format(",d"),
+    color = d3.scale.category20c();
+
+var bubble = d3.layout.pack()
+    .sort(null)
+    .size([diameter, diameter])
+    .padding(1.5);
+
+var svg = d3.select(node).append("svg")
+    .attr("width", diameter)
+    .attr("height", diameter)
+    .attr("class", "bubble");
+
+d3.json("flare.json", function(error, root) {
+    if (error) throw error;
+
+    var bubbles = svg.selectAll(".node")
+        .data(bubble.nodes(classes(flare))
+            .filter(function (d) {
+                return !d.children;
+            }))
+        .enter().append("g")
+        .attr("class", "node")
+        .attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
+});
+
+*/
 class Chart extends Component {
 
-    constructor(props) {
+ /*   constructor(props) {
         super(props);
         this.state = {
             data: React.PropTypes.array,
@@ -51,7 +81,7 @@ class Chart extends Component {
 
     create(el, props, state) {
        // var svg = rd3.select(el).append('svg')
-        var svg = rd3.select(el).append('svg')
+        var svg = d3.select(el).append('svg')
             .attr('class', 'd3')
             .attr('width', props.width)
             .attr('height', props.height);
@@ -64,7 +94,7 @@ class Chart extends Component {
 
     // Re-compute the scales, and render the data points
     update(el, state) {
-        var scales = this._scales(el, state.domain);
+        var scales = this.scales(el, state.domain);
         this._drawPoints(el, scales, state.data);
     }
 
@@ -93,6 +123,8 @@ class Chart extends Component {
         point.exit()
             .remove();
         }
+        */
+
 }
 
-module.exports = Chart;
+export default Chart;
