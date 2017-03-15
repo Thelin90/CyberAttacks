@@ -36,7 +36,14 @@
 }
 
 .button {
-  width: 100px;
-  height: 100px;
-  color: darkgoldenrod;
+    width: auto;
+    height: auto;
+    font-size: 30px;
+    background-color: darkgoldenrod;
+}
+
+.u1 {
+    font-family: "Arial";
+    font-size: 30px;
+    color: black;
 }
