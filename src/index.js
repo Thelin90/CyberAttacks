@@ -4,8 +4,6 @@ import App from './App';
 import './index.css';
 
 ReactDOM.render(
-    <div>
-    <App />
-    </div>,
+    <App width={1000} height={1000}/>,
     document.getElementById('root')
 );
