@@ -6,9 +6,9 @@ import './App.css';
 var d3 = require('d3');
 
 var flag = true;
-var domainCounter = 0, colorLink, target = 0;
+var domainCounter = 0, edgeCounter = 0, linkCounter = 0;
 
-var sources = [], sourcesVal = [], destinations = [];
+var sources = [], destinations = [];
 
 /*
  * Will hold the information about each domain!
@@ -37,6 +37,7 @@ class App extends Component {
      *Handle the GET API request
      */
     handleGetData() {
+        document.getElementById("button").disabled=true;
         axios.get('http://localhost:5000/getData')
             .then((response) => this.setState({
                 dataObjects: response.data,
@@ -211,6 +212,7 @@ class App extends Component {
     start() {
         flag=false;
         this.componentDidMount();
+        document.getElementById("button").disabled=true;
     }
     /*
      * D3 hook on to this
@@ -251,24 +253,19 @@ class App extends Component {
                 .style("fill", function (d) {
                     return d.color
                 });
-            /*  .style("fill",function() {
-             return "hsl(" + Math.random() * 360 + ",100%,50%)";
-             });*/
 
-
-            node.append("text")
-                .attr("cx", function (d) {
-                    d.x;
-                })
-                .attr("cy", function (d) {
-                    d.y;
-                })
-                .text(function (d) {
-                    return d.text;
-                });
-
+           const label = svg.selectAll("text")
+               .data(data.nodes)
+               .enter()
+               .append("text")
+               .text(function (d) { return d.text; })
+               .style("text-anchor", "middle")
+               .style("fill", "#bf3823")
+               .style("font-family", "Arial")
+               .style("font-size", 15);
 
             d3.forceSimulation().on('tick', () => {
+
                 link
                     .attr("x1", function (d) {
                         return d.source.x;
@@ -289,11 +286,18 @@ class App extends Component {
                     })
                     .attr("cy", function (d) {
                         return d.y;
-                    })
-            });
+                    });
 
-            console.log(data.nodes);
-            console.log(data.links);
+                label
+                    .attr("x", function (d) {
+                        return d.x;
+                    })
+                    .attr("y", function (d) {
+                        return d.y;
+                    });
+
+
+            });
         }
 
         if(flag) {
@@ -314,13 +318,13 @@ class App extends Component {
         };
 
         this.state.dataObjects.map((objects) => {
-
+            document.getElementById("button").disabled=false;
             data.nodes.push({
                 "id": domainCounter,
                 "AuthProtocol": objects.AuthProtocol,
                 "Domain": objects.Domain,
                 "DateTime": objects.DateTime,
-                "text": "Domain[" + domainCounter + ":" + objects.Source + "]",
+                "text": "Domain[" + domainCounter + "] : {" + objects.Source + "}",
                 "Destination": objects.Destination,
                 "EventID": objects.EventID,
                 "LogFile": objects.LogFile,
@@ -332,7 +336,6 @@ class App extends Component {
             });
 
             sources.push(objects.Source);
-
             this.sortReplicas();
 
             destinations.push(objects.Source);
@@ -344,35 +347,40 @@ class App extends Component {
                 if (sources[i] === objects.Source) {
                     console.log("sources[j]: " + sources[i]);
                     console.log("objects.Source: " + objects.Source);
-                    sourcesVal.push();
 
                     data.nodes.push({
-                        "id": "Edge" + domainCounter,
+                        "id": "Edge" + edgeCounter,
                         "Source": sources[i],
                         "text": sources[i],
                         "color": "green"
                     });
 
+                    console.log("edge: " + sources[i]);
+                    edgeCounter++;
+
                     data.links.push({
-                        "source": domainCounter,
-                        "target": domainCounter + 1,
+                        "source": 1,
+                        "target": 0,
                         "value": sources[i],
                         "color": "red"
                     });
+
+                    linkCounter++;
                 }
             }
             domainCounter++;
             return {
-                return: console.log("OK current domains read from python_flask <-> OrientDB: CyberAttacks: "+(sources.toString()))
+                return: console.log("OK current domains read from python_flask <-> OrientDB: CyberAttacks: "+(sources.toString() + " Domains: " + domainCounter + " edges: " + edgeCounter + " links: " +linkCounter))
             }
         });
 
         return (
         <div className="App-header">
-            <button onClick={() => this.start()}>Render</button>
             <img src={logo} className="App-logo" alt="logo"/>
             <h2>Welcome to React with D3! Relational graph!</h2>
-            <div style={style} ref="mountPoint"></div>
+            <div style={style} ref="mountPoint">
+                <button className="button" id='button' onClick={() => this.start()}>Render</button>
+            </div>
         </div>
         );
     }

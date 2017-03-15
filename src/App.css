@@ -34,3 +34,9 @@
 .axis--x path {
   display: none;
 }
+
+.button {
+  width: 100px;
+  height: 100px;
+  color: darkgoldenrod;
+}
