@@ -13,6 +13,8 @@ var domainCounter = 0, edgeCounter = 0, linkCounter = 0;
 var sources = [], destinations = [], eventID = [], result = [], domains = [];
 var simulation;
 
+var link, node, label;
+
 /*
  * Will hold the information about each domain!
  */
@@ -65,8 +67,7 @@ class App extends Component {
     }
     /**
      *  Sort away replicas, example: Kerberos, ..., Kerberos => [Kerberos]!.
-     *  Can live without it, but i want to do this for now... helps me to
-     *  print the text to the page when iterating
+     *  Is used to make the algorithm work when creating edges and nodes with links.
      */
     sortReplicas(array) {
         if(array!=null) {
@@ -105,7 +106,7 @@ class App extends Component {
         if(!flag) {
             const {width, height} = this.props;
 
-           simulation = d3.forceSimulation(data.nodes)
+            simulation = d3.forceSimulation(data.nodes)
                 .force("links", d3.forceLink(data.links).distance(700))
                 .force("charge", d3.forceManyBody().strength(-120))
                 .force('center', d3.forceCenter(width / 2, height / 2));
@@ -115,7 +116,7 @@ class App extends Component {
                 .attr("width", width)
                 .attr("height", height);
 
-            const link = svg.selectAll('line')
+            link = svg.selectAll('line')
                 .data(data.links)
                 .enter()
                 .append('line')
@@ -125,7 +126,7 @@ class App extends Component {
                 })
                 .style('stroke-opacity', 0.6);
 
-            const node = svg.selectAll("circle")
+            node = svg.selectAll("circle")
                 .data(data.nodes)
                 .enter()
                 .append("circle")
@@ -140,7 +141,7 @@ class App extends Component {
                     .on("drag", this.dragged)
                     .on("end", this.dragended));
 
-           const label = svg.selectAll("text")
+           label = svg.selectAll("text")
                .data(data.nodes)
                .enter()
                .append("text")
@@ -150,39 +151,8 @@ class App extends Component {
                .style("font-family", "Arial")
                .style("font-size", 20);
 
-            d3.forceSimulation().on('tick', () => {
-                link
-                    .attr("x1", function (d) {
-                        return d.source.x;
-                    })
-                    .attr("y1", function (d) {
-                        return d.source.y;
-                    })
-                    .attr("x2", function (d) {
-                        return d.target.x;
-                    })
-                    .attr("y2", function (d) {
-                        return d.target.y;
-                    });
+           this.tick(link, node, label);
 
-                node
-                    .attr("cx", function (d) {
-                        return d.x;
-                    })
-                    .attr("cy", function (d) {
-                        return d.y;
-                    });
-
-                label
-                    .attr("x", function (d) {
-                        return d.x;
-                    })
-                    .attr("y", function (d) {
-                        return d.y;
-                    });
-
-
-            });
         }
         if(flag) {
             flag=false;
@@ -190,12 +160,61 @@ class App extends Component {
         }
     }
 
+    /**
+     * When the user want to drag the nodes, restart the tick()
+     */
+    restart_tick() {
+        if(!flag) {
+            this.tick(link, node, label);
+        }
+    }
 
     /**
-     * This only works a couple of seconds... BONUS!
+     * function tick that make sure to update the position of the nodes
+     *
+     * @param link
+     * @param node
+     * @param label
+     */
+    tick(link, node, label) {
+        d3.forceSimulation().on('tick', () => {
+            link
+                .attr("x1", function (d) {
+                    return d.source.x;
+                })
+                .attr("y1", function (d) {
+                    return d.source.y;
+                })
+                .attr("x2", function (d) {
+                    return d.target.x;
+                })
+                .attr("y2", function (d) {
+                    return d.target.y;
+                });
+
+            node
+                .attr("cx", function (d) {
+                    return d.x;
+                })
+                .attr("cy", function (d) {
+                    return d.y;
+                });
+
+            label
+                .attr("x", function (d) {
+                    return d.x;
+                })
+                .attr("y", function (d) {
+                    return d.y;
+                });
+        });
+    }
+
+    /**
+     * Function for drag functionality
      * @param d
      */
-    static dragstarted(d) {
+    dragstarted(d) {
         if (!d3.event.active)
             simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
@@ -203,7 +222,7 @@ class App extends Component {
     }
 
     /**
-     * This only works a couple of seconds... BONUS!
+     * Function for drag functionality
      * @param d
      */
     dragged(d) {
@@ -212,10 +231,10 @@ class App extends Component {
     }
 
     /**
-     * This only works a couple of seconds... BONUS!
+     * Function for drag functionality
      * @param d
      */
-    static dragended(d) {
+    dragended(d) {
         if (!d3.event.active)
             simulation.alphaTarget(0);
         d.fx = null;
@@ -274,7 +293,7 @@ class App extends Component {
                 /*
                  * Find the source from the domain!
                  */
-                if (data.nodes[j].Destination === check && data.nodes[j].EventID > 0 && data.nodes[j].EdgeID === -1) {
+                if (data.nodes[j].Destination === check && data.nodes[j].EdgeID === -1) {
                     source.push(j);
                     color = "purple";
                 }
@@ -381,9 +400,9 @@ class App extends Component {
         <div className="App-header">
             <img src={logo} className="App-logo" alt="logo"/>
             <h2>Welcome to React with D3! Relational graph!</h2>
-            <div style={style} ref="mountPoint">
+            <div style={style} ref="mountPoint" onClick={() => this.restart_tick()}>
                 <button className="button" id='button' onClick={() => this.start()}>Render</button>
-                <u1 className="u1" >Purple: Destination & Red: Source. Blue is the main domain the cyber-attack. Green is the edges that show a certain value for the Source or Destination. Yellow is for EventID.</u1>
+                <u1 className="u1" >Purple: Destination & Red: Source. Blue is the main domain the cyber-attack. Green is the edges that show a certain value for the Source or Destination or EventID. Yellow is for EventID.</u1>
             </div>
         </div>
         );
