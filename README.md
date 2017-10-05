@@ -1,4 +1,7 @@
-Please find attached manual within the files. Also see auto-doc below.
+Please find attached manual within the files(screenshot below also see auto-doc below).
+
+![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/r1.png)
+
 -----------------------------------------------------------------------
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
