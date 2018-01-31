@@ -1,5 +1,9 @@
 Please find attached manual within the files(screenshot below also see auto-doc below).
 
+PS: Don't forget to check the other repos that has a relation to this project: https://github.com/Thelin90/CyberAttacks_python-flask-server & https://github.com/Thelin90/CyberAttacks_OrientDB
+
+And please note this project is not perfect, I will try to improve it some day.
+
 ![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/r1.png)
 
 -----------------------------------------------------------------------
