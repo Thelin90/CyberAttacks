@@ -6,15 +6,15 @@ PS: Don't forget to check the other repos that has a relation to this project: h
 
 And please note this project is not perfect, I will try to improve it some day. I have plans to add machine learning to the problem.
 
-![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/r1.png)
-
 ## Introduction
 
 This readme will cover the content of the developer and user manual pdf, but in a md format. The project was made to learn more about how to analyze large datasets and displaying the relations between them. This could evolve in other data scientist decisions, but the implementation is focused on creating the relationships. Furthermore it will be explained how to configure the environments and how to understand the code delivered with this manual. Follow every step of this manual and everything will be up running as it should.
 
+## Data-set
 The data-set is a csv file that contains a number of attributes. The file is attached with this manual and it is called logons.csv.
 
-// picture
+## Desired outcome
+![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/orientdb.png)
 
 ## Setup orientdb
 
@@ -24,14 +24,13 @@ Video: http://www.youtube.com/v/T7HNPiZSwsw
 
 When the installation is done locate the folder and run following commands from the cmd:
 
-```json
-cd bin
+fcd bin
 ./server.sh
 ```
 
 If it does not work try instead:
 
-```json
+```bash
 cd bin
 ./server.bat
 ```
@@ -40,26 +39,28 @@ Once OrientDB is running, enter the following URL in a browser window: http://lo
 
 Furthermore notice the video attached above. It provides the setup in a video to make sure there is no doubts.
 
+## Upload Data
+
 Now when the database is up running the process can continue. The data is going to be uploaded from the logons.csv file with using a json file. In this case called Attacks-multi.json. It is located on the github provided with this manual(file attached with orientdb zip).
 
 Locate the bin folder orientdb-community-x.x.xx version and drag the file into the folder. Please remember to correct the paths within the Attacks-multi.json. The code is explained on the next page.
 
-// picture
+![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/upload-data.png)
 
-```json
+```bash
 cd bin
 ./oetl.sh Attacks-multi.json
 ```
 
 If it does not work try instead:
-```json
+```bash
 cd bin
 ./oetl.bat Attacks-multi.json
 ```
 
 The database CyberAttacks is now created with all the vertices and edges it needs to be able to create the relational graph that is going to be displayed. The acutal script is explained below:
 
-```json
+```javascript
 {
   "config": {
   },
@@ -71,7 +72,7 @@ The database CyberAttacks is now created with all the vertices and edges it need
 
 First the path of the data-set logons.csv need to be added and the specific extractor is defined as the csv format.
 
-```json
+```javascript
   "transformers" : [
 	{ "vertex":{"class":"Status"}},
 	{ "vertex":{"class":"Domain" }},
@@ -87,7 +88,7 @@ First the path of the data-set logons.csv need to be added and the specific extr
 
 Then all the vertices and edges are created. The edges also has certain values they will search for. For an example useSource will join the Source column value and connect itself to that.
 
-```json
+```javascript
   "loader" : { "orientdb": {
       "dbURL": "plocal:C:/"path"/orientdb-community-x.x.xx/databases/CyberAttacks",
       "dbUser": "admin",
@@ -123,13 +124,13 @@ Then it will setup the loader which is OrientDB and set the path for the databas
 
 Now enter the studio environment and it should look like this:
 
-// Picture 
+![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/Cbresult.png)
 
 ## OrientDB user input
 
 Enter the graph tab inside the studio environment and enter following commands:
 
-```json
+```javascript
 SELECT * FROM useSource WHERE @rid > "\#-1:-1" ORDER BY @rid ASC LIMIT 20
 SELECT * FROM hasDestination WHERE @rid > "\#-1:-1" ORDER BY @rid ASC LIMIT 20
 SELECT * FROM useEventID WHERE @rid > "\#-1:-1" ORDER BY @rid ASC LIMIT 20
@@ -137,7 +138,7 @@ SELECT * FROM useEventID WHERE @rid > "\#-1:-1" ORDER BY @rid ASC LIMIT 20
 
 Enter each of these commands and run each one with ctrl+enter. The output will be:
 
-// Picture
+![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/finalresult.png)
 
 The possibility to choose much greater values to search for is available. But in this case 20 domains are called upon to make it easier to understand.
 
@@ -173,11 +174,11 @@ When Python is installed on the given computer the procedure can move on to inst
 The source code can be found for downloading\cite{gitflask}. To create a new project from existing source code do following:
 
 ```json
-    On the main menu choose File | Open.
-    In the dialog that opens, select the directory that contains the desired source code.
-      Note that applications created externally are marked with the regular directory icon.
-    Click OK.
-      Specify whether you want the new project to be opened in a separate window or close the current
+On the main menu choose File | Open.
+In the dialog that opens, select the directory that contains the desired source code.
+Note that applications created externally are marked with the regular directory icon.
+Click OK.
+Specify whether you want the new project to be opened in a separate window or close the current
 ```
 
 However if the developer want to create the flask project from the beginning this can also be done. To create a Flask project please  follow these steps:
@@ -185,9 +186,7 @@ However if the developer want to create the flask project from the beginning thi
 ```json
 On the main menu, choose File | New | Project, or click the New Project button in the Welcome screen. Create New Project dialog box opens.
 
-In the Create New Project dialog box, specify the following:
-    Project name and location
-    Project type Flask project.
+In the Create New Project dialog box, specify the following: project name and location, project type Flask project.
     
 In the Python Interpreter drop-down list. Select the Python SDK that is going to be used. If the desired interpreter is not found in the list, click  and choose the interpreter type.
 
@@ -195,8 +194,7 @@ Refer to the section Configuring Available Python Interpreters.
 
 If Flask is missing in the selected interpreter will display an information message that Flask will be downloaded.
 
-Click (More Settings), and specify the following:
-    From the drop-down list, select the template language to be used. The directory where the templates will be stored. 
+Click (More Settings), and specify the following: From the drop-down list, select the template language to be used. The directory where the templates will be stored. 
     
 Click Create.
 ```
@@ -204,7 +202,8 @@ Click Create.
 PyCharm creates an application and produces specific directory structure which can be explored in the Project tool window. Furthermore PyCharm creates a stub Python script with the name <project name>.py. Which provides a simple "Hello, World!" example.
   
 ### Code implementation Flask server
-```json
+
+```python
 # Author: Simon Thelin
 # version: 1.2
 # date: 2017-03-10
@@ -220,7 +219,7 @@ CORS(app)
 
 First of all the needed libraries are imported. PyCharm will help with the installing of all needed libraries just press alt+enter and it will be done. It is also possible to install in the console. Then just type 'pip install "library"' and it works fine as well. In this case pyorient is used. OrientDB supports all JVM languages for server-side scripting. Using the PyOrient module. Development with database applications for OrientDB using the Python language is enabled. In this application cross -origin  resource(CORS) must be activated. When enabling CORS there is a desire to enable it for all use cases on a domain. Therefore no mucking around with different allowed headers or methods and so on. Furthermore the default state submission of cookies across domains is disabled due to the security implications. Then an instance of this class is made. The first argument is the name of the applications module or package. If a single module (as in this example) \_\_name\_\_ should be used because depending on if it is started as application or imported as module the name will be different ('\_\_main\_\_' versus the actual import name). This is needed so that Flask knows where to look for templates or static files. The library jsonify is imported so that the parsing to JSON format is available when the React-D3 application fetch the data. The render\_template is there to render the html file contained within the project. But this is never used in our application.
 
-```json
+```python
 data_to_json = []
 
 client = pyorient.OrientDB( "localhost", 2424 )
@@ -233,7 +232,7 @@ loop = (client.command( "select * from Domain ORDER BY @rid ASC LIMIT 20" ))
 
 An array is created that will contain each domain object. In this case of JSON format. PyOrient is composed of two layers. At its foundation is the python wrapper around the OrientDB binary protocol. Furthermore OrientDB has its own SQL language. It is the Object-Graph Mapper (or OGM). The OGM layer is documented separately. An init is made to the client and then the session token is enabled. Furthermore in this use case there is a need to maintain a client connection across several sessions. For instance, in a web application there might be a will to set an identifier for a shopping cart or use sessions to maintain a local history of the users interactions with the site. Furthermore a connection is made and proceeds to the given database of CyberAttacks. Then the a call to the Domain vertex is made. This is done on th basis of 20 domains. Therefore not this can be changed to whatever reasonable number up to the max value of the number of rows available. 
 
-```json
+```python
 for result in loop:
     data_to_json.append({'Domain': result.Domain, 'AuthProtocol': result.AuthProtocol, 'LogonType':result.LogonType, 'Destination': result.Destination,'Source': result.Source,'User': result.User,'DateTime': result.DateTime, 'LogFile': result.LogFile, 'Type': result.Type, 'EventID': result.EventID})
 
@@ -251,7 +250,7 @@ Then the result is going through a loop and add every value to each attribut. Nu
 
 Worth mentioning is this line of code:
 
-```json
+```python
 loop = (client.command( "select * from Domain ORDER BY @rid ASC LIMIT 20" ))
 ```
 
@@ -264,7 +263,7 @@ This section explains how the React environment is setup.
 ### WebStorm
 For this project WebStorm was chosen. Begin with downloading the latest version of WebStorm from the JetBrains website\cite{installws} There are the versions for Windows, OS X and Linux. Depending on your operating system:
 
-```json
+```javascript
 Windows: Run the .exe file and follow the instructions of WebStorm Setup wizard.
 Open the .dmg package, and drag WebStorm to the Applications folder.
 Linux: Unpack the .tar.gz archive into any directory within your home directory.
@@ -286,7 +285,7 @@ In JSX tags WebStorm can provide coding assistance for ReactJS-specific attribut
 
 Download the project from the github source\cite{gitreactcode}. Then follow these steps:
 
-```json
+```javascript
 On the main menu choose File | Open.
 In the dialog that will occur. Select the directory that contains the desired source code.
     Note that applications created externally are marked with the regular directory icon folder.png.
@@ -295,7 +294,7 @@ Click OK and specify whether the project will be opened in a separate window or 
 
 NodeJS has already installed all the needed libraries for the project and it is integrated in the console of WebStorm. Therefore the developer does not have to do this at the initial stage. However if the developer wants to add new features they need to be installed through the npm. Follow these steps if that is the case:
 
-```json
+```bash
 Press alt+F12
 Enter npm install "library"
 The result will end up in the console if it was a success or not
@@ -305,7 +304,7 @@ The result will end up in the console if it was a success or not
 
 Now when the project is up running lets make sure to analyze the actual code. However the whole code is not going to be covered in this manual because it would be to much to analyze. The focus will be on the most important features. Such as fetching the data. How is it stored within the application. And how is the actual connection of nodes and edges made. Lets start by looking at the fetching of the data.
 
-```json
+```javascript
     constructor(props) {
         super(props);
         this.state = {
@@ -331,7 +330,7 @@ Now when the project is up running lets make sure to analyze the actual code. Ho
 
 The constructor will hold the dataObjects which in this case is the domains. There will also be an flag indicating if the fetching as been successful or not. The http request is made from the flask server and the data is retrieved in to our application.
 
-```json
+```javascript
 var domainCounter = 0, edgeCounter = 0, linkCounter = 0;
 var sources = [], destinations = [], eventID = [], result = [], domains = [];
 /*
@@ -345,7 +344,7 @@ var  data = {
 
 The actual data that will contain all the nodes and edges are initialized. With nodes and links. Where the nodes will be both the vertex and the edge where the links connect the nodes with the edges. We have also declared several variables to maintain the structure. Will be covered later on.
 
-```json
+```javascript
     this.state.dataObjects.map((objects) => {
         document.getElementById("button").disabled=false;
         data.nodes.push({
@@ -380,7 +379,7 @@ eventID = this.sortReplicas(eventID);
 
 The application will add the source, destination and event-id values to arrays where they will be sorted. This to make sure there is no replicas within the graphical representation. This is also used within the actual algorithm when creating the nodes and edges with links.
 
-```json
+```javascript
     sortReplicas(array) {
         if(array!=null) {
             var units = array.map((name) => {
@@ -397,13 +396,13 @@ The application will add the source, destination and event-id values to arrays w
 
 The sorting is straight forward.
 
-```json
+```javascript
 <button className="button" id='button' onClick={() => this.start()}>Render</button>
 ```
 
 Then when the user wants to render the data-sets to creat the relational graph. A method called start will be called.
 
-```json
+```javascript
     start() {
         this.countOccurrence();
         console.log(result);
@@ -418,7 +417,7 @@ Then when the user wants to render the data-sets to creat the relational graph. 
 
 The first method call is countOccurrence. It will simply calculate all the number of a repeating attribute. This is for now mainly for debugging purpose.
 
-```json
+```javascript
     countOccurrence() {
         if(domains!=null) {
             for (var i = 0; i < domains.length; ++i) {
@@ -433,7 +432,7 @@ The first method call is countOccurrence. It will simply calculate all the numbe
 
 A straight forward solution. In the same moment as this happens the flag is set to false. Lets go back and look at the calls for createEdgeAndLinks.
 
-```json
+```javascript
     createEdgeAndLinks(array) {
         for (var i = 0; i < array.length; i++) {
             data.nodes.push({
@@ -457,7 +456,7 @@ A straight forward solution. In the same moment as this happens the flag is set 
 
 This will now create the edges for the application. So lets say there is 20 domains where all of them have the event-id 540. But there is no need to have 20 edges with the same value. So based upon the replica check there will now only be one edge created. Then it will also make a call each time to the existing nodes which in this case are the domains. Notice the edgeCounter increments for every edge. Lets take a look inside addLink.
 
-```json
+```javascript
    addLink(source, target, check, array) {
         var color = "";
         for(var k=0; k<array.length; k++) {
@@ -495,11 +494,11 @@ This will now create the edges for the application. So lets say there is 20 doma
 
 This is the current solution. The links will be created and different colors to the links will be chosen depending on what attribute it contains. The code above is confined to the event-id. The same procedure is made for the other attributes source and destinations. The algorithm make sure to find the actual edges which are indicated with the value of -1. An illustration is made below:
 
-// picture
+![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/algotrithm.png)
 
 When looking back at the call to the start() method. There is also a flag that is set to false. This will make the componentDidMount activate.
 
-```json
+```javascript
 componentDidMount() {
         if(!flag) {
             const {width, height} = this.props;
@@ -562,7 +561,7 @@ componentDidMount() {
 
 This will make sure that the nodes and edges and links are displayed on the react page in a proper way. The solution is very straight forward. It will also make a call to the tick function which will make sure that the nodes location are updated:
 
-```json
+```javascript
 /**
 * When the user want to drag the nodes
 * restart the tick()     
@@ -615,7 +614,7 @@ tick(link, node, label) {
 
 Worth mentioning is the svg element. Inside the svg element all the nodes and edges and links are confined. This svg element is what gets rendered in at the react page mentioned before. D3 is the library that is being used. The current solution for drag() events is not optimal but it works. It receives the oldest position every time the user clicks the svg element if the tick() is out of time. 
 
-```json
+```javascript
 /**
 * Function for drag functionality
 * @param d
@@ -659,11 +658,11 @@ npm start
 
 The application will later on be available at http://localhost:3000/. Enter this in the web-browser and the result will look like:
 
-// picture
+![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/reactpage.png)
 
 
 Press the render button and the result will be displayed. Feel free to move the nodes around.
 
-// picture
+![Screenshot](https://github.com/Thelin90/CyberAttacks/blob/master/reactpageresult.png)
 
 Happy analyzing!
