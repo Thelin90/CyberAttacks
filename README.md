@@ -68,13 +68,13 @@ The database CyberAttacks is now created with all the vertices and edges it need
   "source" : {"file": { "path": "C:/"path"/logons.csv" }},
   "extractor" : {
     "csv": {}
-  },
+},
 ```
 
 First the path of the data-set logons.csv need to be added and the specific extractor is defined as the csv format.
 
 ```javascript
-  "transformers" : [
+ "transformers" : [
 	{ "vertex":{"class":"Status"}},
 	{ "vertex":{"class":"Domain" }},
 	{ "edge":{"class":"hasDomain", "joinFieldName": "Domain", "lookup": "Status.Domain", "unresolvedLinkAction": "CREATE"}},
@@ -84,7 +84,7 @@ First the path of the data-set logons.csv need to be added and the specific extr
 	{ "edge":{"class":"useSource", "joinFieldName": "Source", "lookup": "Status.Source", "unresolvedLinkAction": "CREATE"}},
 	{ "edge":{"class":"hasDestination", "joinFieldName": "Destination", "lookup": "Status.Destination", "unresolvedLinkAction": "CREATE"}},
 	{ "edge":{"class":"useLogFile", "joinFieldName": "LogFile", "lookup": "Status.LogFile", "unresolvedLinkAction": "CREATE"}},
-  ],
+ ],
 ```
 
 Then all the vertices and edges are created. The edges also has certain values they will search for. For an example useSource will join the Source column value and connect itself to that.
@@ -174,7 +174,7 @@ When Python is installed on the given computer the procedure can move on to inst
 ### Flask project
 The source code can be found for downloading\cite{gitflask}. To create a new project from existing source code do following:
 
-```json
+```bash
 On the main menu choose File | Open.
 In the dialog that opens, select the directory that contains the desired source code.
 Note that applications created externally are marked with the regular directory icon.
@@ -184,7 +184,7 @@ Specify whether you want the new project to be opened in a separate window or cl
 
 However if the developer want to create the flask project from the beginning this can also be done. To create a Flask project please  follow these steps:
 
-```json
+```bash
 On the main menu, choose File | New | Project, or click the New Project button in the Welcome screen. Create New Project dialog box opens.
 
 In the Create New Project dialog box, specify the following: project name and location, project type Flask project.
@@ -242,7 +242,7 @@ def index():
     return jsonify(data_to_json)
 
 if __name__ == "__main__":
-    app.run()
+    app.run()
 ```
 
 Then the result is going through a loop and add every value to each attribut. Null is also an acceptable value and will be set if the value is missing. Then the route() decorator is used to tell Flask what URL should trigger the function. The React-D3 code will fetch from this and note the jsonify of the data-set. And the application will run. Note no debugging features activated and it should not be activated in this case.
@@ -286,10 +286,10 @@ In JSX tags WebStorm can provide coding assistance for ReactJS-specific attribut
 
 Download the project from the github source\cite{gitreactcode}. Then follow these steps:
 
-```javascript
+```bash
 On the main menu choose File | Open.
 In the dialog that will occur. Select the directory that contains the desired source code.
-    Note that applications created externally are marked with the regular directory icon folder.png.
+Note that applications created externally are marked with the regular directory icon folder.png.
 Click OK and specify whether the project will be opened in a separate window or close the current project and reuse the existing one.
 ```
 
@@ -306,7 +306,7 @@ The result will end up in the console if it was a success or not
 Now when the project is up running lets make sure to analyze the actual code. However the whole code is not going to be covered in this manual because it would be to much to analyze. The focus will be on the most important features. Such as fetching the data. How is it stored within the application. And how is the actual connection of nodes and edges made. Lets start by looking at the fetching of the data.
 
 ```javascript
-    constructor(props) {
+    constructor(props) {
         super(props);
         this.state = {
             dataObjects: [],
@@ -326,7 +326,7 @@ Now when the project is up running lets make sure to analyze the actual code. Ho
             .catch(function (error) {
                 console.log(error);
             });
-    }
+    }
 ```
 
 The constructor will hold the dataObjects which in this case is the domains. There will also be an flag indicating if the fetching as been successful or not. The http request is made from the flask server and the data is retrieved in to our application.
@@ -346,7 +346,7 @@ var  data = {
 The actual data that will contain all the nodes and edges are initialized. With nodes and links. Where the nodes will be both the vertex and the edge where the links connect the nodes with the edges. We have also declared several variables to maintain the structure. Will be covered later on.
 
 ```javascript
-    this.state.dataObjects.map((objects) => {
+    this.state.dataObjects.map((objects) => {
         document.getElementById("button").disabled=false;
         data.nodes.push({
             "id": domainCounter,    
@@ -364,12 +364,12 @@ The actual data that will contain all the nodes and edges are initialized. With 
             "EdgeID": -1,
             "color": "blue"
     });
-    domainCounter++;
+    domainCounter++;
 ```
 
 Here every domain node will be read and saved in the data-set of nodes. Notice that they are marked to have an edge id with -1. This will help the connection later on. The domainCounter will also increment for every added domain.
 
-```json
+```javascript
 sources.push(objects.Source);
 sources = this.sortReplicas(sources);
 destinations.push(objects.Destination);
@@ -381,7 +381,7 @@ eventID = this.sortReplicas(eventID);
 The application will add the source, destination and event-id values to arrays where they will be sorted. This to make sure there is no replicas within the graphical representation. This is also used within the actual algorithm when creating the nodes and edges with links.
 
 ```javascript
-    sortReplicas(array) {
+    sortReplicas(array) {
         if(array!=null) {
             var units = array.map((name) => {
                 return {count: 1, name: name}
@@ -392,7 +392,7 @@ The application will add the source, destination and event-id values to arrays w
             array = Object.keys(units).sort((a, b) => units[a] < units[b])
         }
         return array;
-    }
+    }
 ```
 
 The sorting is straight forward.
@@ -404,7 +404,7 @@ The sorting is straight forward.
 Then when the user wants to render the data-sets to creat the relational graph. A method called start will be called.
 
 ```javascript
-    start() {
+    start() {
         this.countOccurrence();
         console.log(result);
         this.createEdgeAndLinks(sources);
@@ -413,13 +413,13 @@ Then when the user wants to render the data-sets to creat the relational graph. 
         flag=false;
         this.componentDidMount();
         document.getElementById("button").disabled=true;
-    }
+    }
 ```
 
 The first method call is countOccurrence. It will simply calculate all the number of a repeating attribute. This is for now mainly for debugging purpose.
 
 ```javascript
-    countOccurrence() {
+    countOccurrence() {
         if(domains!=null) {
             for (var i = 0; i < domains.length; ++i) {
                 if (!result[domains[i]]) {
@@ -434,7 +434,7 @@ The first method call is countOccurrence. It will simply calculate all the numbe
 A straight forward solution. In the same moment as this happens the flag is set to false. Lets go back and look at the calls for createEdgeAndLinks.
 
 ```javascript
-    createEdgeAndLinks(array) {
+    createEdgeAndLinks(array) {
         for (var i = 0; i < array.length; i++) {
             data.nodes.push({
                 "EdgeID": edgeCounter,
@@ -452,13 +452,13 @@ A straight forward solution. In the same moment as this happens the flag is set 
             source = [];
             target = 0;
         }
-    }
+    }
 ```
 
 This will now create the edges for the application. So lets say there is 20 domains where all of them have the event-id 540. But there is no need to have 20 edges with the same value. So based upon the replica check there will now only be one edge created. Then it will also make a call each time to the existing nodes which in this case are the domains. Notice the edgeCounter increments for every edge. Lets take a look inside addLink.
 
 ```javascript
-   addLink(source, target, check, array) {
+    addLink(source, target, check, array) {
         var color = "";
         for(var k=0; k<array.length; k++) {
             for (var j = 0; j < (domainCounter+edgeCounter); j++) {
@@ -490,7 +490,7 @@ This will now create the edges for the application. So lets say there is 20 doma
                 linkCounter++;
             }
         }
-    }
+    }
 ```
 
 This is the current solution. The links will be created and different colors to the links will be chosen depending on what attribute it contains. The code above is confined to the event-id. The same procedure is made for the other attributes source and destinations. The algorithm make sure to find the actual edges which are indicated with the value of -1. An illustration is made below:
@@ -652,7 +652,7 @@ They make it possible to move around the nodes during the initialization time an
 
 To run this project enter in the console by pressing alt+F12. then enter:
 
-```json
+```bash
 npm install
 npm start
 ```
