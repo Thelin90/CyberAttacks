@@ -24,7 +24,8 @@ Video: http://www.youtube.com/v/T7HNPiZSwsw
 
 When the installation is done locate the folder and run following commands from the cmd:
 
-fcd bin
+```bash
+cd bin
 ./server.sh
 ```
 
